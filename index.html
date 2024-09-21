@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APPLE | Iphone 16</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+
+
+</head>
+<body>
+        <nav class="navbar">
+            <div class="logo">
+                <h4><i class="fa-brands fa-apple"> Apple</i></h4>
+            </div>
+            <div class=>
+                <button class="btn-darkmode" onclick="darkmode()">Darkmode</button>
+            </div>
+        </nav>
+        <div class="content-box">
+            <div class="content-text">
+                <p><i class="fa-brands fa-apple"></i> iPhone 16</p>
+                <h1>Novo sistema de câmera.
+                    Escolha por qual lente
+                    você quer ver o mundo.</h1>
+                <button data-bs-toggle="modal" data-bs-target="#exampleModal">Veja aqui!</button>
+                <ul>
+                    <li class="gray" onclick="getColor()"></li>
+                    <li class="black" onclick="getColor()"></li>
+                    <li class="gold" onclick="getColor()"></li>
+                    <li class="blue" onclick="getColor()"></li>
+                    <li class="pink" onclick="getColor()"></li>
+                </ul>
+            </div>
+            <div class="content-image">
+                <img src="assets/images/iphone-gray.png" alt="">
+
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Visualização 3D</h1>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close">X</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="content-3d" id="content-3d"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        let model; // Variável global para o modelo
+        let isInteracting = false; // Flag para interação do usuário
+
+        // Função para inicializar o Three.js no modal
+        function init3DModel() {
+            // Verifica se já existe um canvas para evitar múltiplas inicializações
+            if (document.querySelector('#content-3d canvas')) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, document.querySelector('#content-3d').clientWidth / document.querySelector('#content-3d').clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Alpha para fundo transparente
+            renderer.setSize(document.querySelector('#content-3d').clientWidth, document.querySelector('#content-3d').clientHeight);
+            renderer.setClearColor(0x000000, 0); // Transparente
+            document.getElementById('content-3d').appendChild(renderer.domElement);
+
+            // Controles de órbita para interação com o mouse
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // Suaviza a rotação
+            controls.dampingFactor = 1;
+            controls.screenSpacePanning = true; 
+            controls.enableRotate = true; // Permitir rotação
+            controls.minPolarAngle = Math.PI / 2; // Limitar o movimento ao eixo X
+            controls.maxPolarAngle = Math.PI / 2; // Limitar o movimento ao eixo X
+            controls.minDistance = 1.75; // Distância mínima
+            controls.maxDistance = 1.75; // Distância máxima igual à mínima para manter a câmera fixa
+
+
+
+            // Desativar interações do botão direito do mouse
+            controls.mouseButtons.RIGHT = null; // Desativa o comportamento do botão direito
+
+            // Adicionar mais iluminação para o modelo
+            const light1 = new THREE.DirectionalLight(0xffffff, 1);
+            light1.position.set(5, 5, 5);
+            scene.add(light1);
+
+            const light2 = new THREE.DirectionalLight(0xffffff, 1);
+            light2.position.set(-5, 5, -5);
+            scene.add(light2);
+
+            const light3 = new THREE.DirectionalLight(0xffffff, 1);
+            light3.position.set(0, -5, 5);
+            scene.add(light3);
+            const light4 = new THREE.DirectionalLight(0xffffff, 1.5); // Aumentar a intensidade
+            light1.position.set(5, 5, 5); // Pode experimentar diferentes posições
+            scene.add(light1);
+
+            const light5 = new THREE.DirectionalLight(0xffffff, 1.5);
+            light2.position.set(-5, 5, -5);
+            scene.add(light2);
+
+            const ambientLight = new THREE.AmbientLight(0x404040, 3); // Aumentar a intensidade
+            scene.add(ambientLight);
+
+
+            // Carregar o modelo GLTF
+            const loader = new THREE.GLTFLoader();
+            loader.load('assets/iphone3d/scene.gltf', function (gltf) {
+                model = gltf.scene; // Atribuir à variável global `model`
+                const box = new THREE.Box3().setFromObject(model); // Caixa delimitadora do modelo
+                const center = box.getCenter(new THREE.Vector3()); // Centro da caixa
+
+                model.position.sub(center); // Centraliza o modelo removendo o offset
+                model.scale.set(0.125, 0.125, 0.125 ); // Ajustar a escala do modelo
+
+                scene.add(model); // Adicionar o modelo à cena
+
+                animate(); // Iniciar a animação
+            }, undefined, function (error) {
+                console.error(error);
+            });
+
+            // Configuração da câmera
+            camera.position.z = 3;
+
+            // Função de animação
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Verifica se o modelo foi carregado e se o usuário não está interagindo
+                if (model && !isInteracting) {
+                model.rotation.y += 0.005; // Rotação automática lenta em torno do eixo X
+            }
+
+                controls.update(); // Atualiza os controles de órbita
+                renderer.render(scene, camera); // Renderiza a cena
+            }
+
+            // Ajustar o renderizador ao redimensionar o modal
+            window.addEventListener('resize', function () {
+                const width = document.querySelector('#content-3d').clientWidth;
+                const height = document.querySelector('#content-3d').clientHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            });
+
+            // Detecta interação do mouse e pausa a rotação
+            controls.addEventListener('start', () => {
+                isInteracting = true; // Usuário começou a interagir
+            });
+            controls.addEventListener('end', () => {
+                isInteracting = false; // Usuário parou de interagir
+            });
+        }
+
+        // Event listener para quando o modal for aberto
+        const modalElement = document.getElementById('exampleModal');
+        modalElement.addEventListener('shown.bs.modal', function () {
+            init3DModel(); // Inicializar o Three.js quando o modal for exibido
+        });
+
+        // Listener para quando o modal for fechado
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            document.getElementById('content-3d').innerHTML = ''; // Remove o canvas ao fechar o modal
+        });
+
+
+        </script>
+    </div>
+
+</body>
+</html>
